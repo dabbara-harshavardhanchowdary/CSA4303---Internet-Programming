@@ -1,0 +1,435 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Bus Ticket Booking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 0;
+            background: #f2f5f9;
+        }
+
+        header {
+            background: #123c69;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        nav {
+            background: #087e8b;
+            padding: 12px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            margin: 12px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        section {
+            background: white;
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 900px;
+            border-radius: 8px;
+        }
+
+        input, select, button, textarea {
+            padding: 10px;
+            margin: 6px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #087e8b;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #123c69;
+        }
+
+        .bus {
+            background: #e8f4f8;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        footer {
+            background: #123c69;
+            color: white;
+            text-align: center;
+            padding: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Online Bus Ticket Booking</h1>
+    <p>Book Your Journey Easily</p>
+</header>
+
+<nav>
+    <a href="#home">Home</a>
+    <a href="#search">Search Bus</a>
+    <a href="#login">Login</a>
+    <a href="#register">Register</a>
+    <a href="#admin">Admin</a>
+</nav>
+
+<section id="home">
+    <h2>Welcome to Bus Booking</h2>
+    <p>Search buses, reserve seats and manage your tickets online.</p>
+</section>
+
+<section id="search">
+    <h2>Search Buses</h2>
+
+    <input id="from" placeholder="Source">
+    <input id="to" placeholder="Destination">
+    <input id="date" type="date">
+
+    <button onclick="searchBus()">Search Bus</button>
+    <div id="results"></div>
+</section>
+
+<section id="login">
+    <h2>User Login</h2>
+    <input id="loginUser" placeholder="Username">
+    <input id="loginPass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p id="loginMsg"></p>
+</section>
+
+<section id="register">
+    <h2>User Registration</h2>
+    <input id="regName" placeholder="Full Name">
+    <input id="regEmail" type="email" placeholder="Email">
+    <input id="regPass" type="password" placeholder="Password">
+    <button onclick="register()">Register</button>
+    <p id="regMsg"></p>
+</section>
+
+<section>
+    <h2>My Bookings</h2>
+    <div id="bookings">No bookings yet.</div>
+</section>
+
+<section>
+    <h2>Comments</h2>
+    <textarea id="comment" placeholder="Write your comment"></textarea>
+    <button onclick="addComment()">Post Comment</button>
+    <div id="comments"></div>
+</section>
+
+<section id="admin">
+    <h2>Admin Panel - Add Bus</h2>
+
+    <input id="busName" placeholder="Bus Name">
+    <input id="busFrom" placeholder="Source">
+    <input id="busTo" placeholder="Destination">
+    <select id="busType">
+        <option>Volvo</option>
+        <option>Sleeper Coach</option>
+        <option>AC Coach</option>
+        <option>Non-AC Coach</option>
+    </select>
+    <input id="busSeats" type="number" placeholder="Available Seats">
+    <input id="busPrice" type="number" placeholder="Ticket Price">
+
+    <button onclick="addBus()">Add Bus</button>
+    <button onclick="generateReport()">Generate Report</button>
+
+    <div id="busList"></div>
+    <div id="report"></div>
+</section>
+
+<footer>
+    <p>Online Bus Ticket Booking System | Internet Programming Lab</p>
+</footer>
+
+<script>
+    let buses = [
+        {
+            name: "Express Travels",
+            from: "Chennai",
+            to: "Bangalore",
+            type: "Volvo",
+            seats: 30,
+            price: 650
+        },
+        {
+            name: "City Travels",
+            from: "Hyderabad",
+            to: "Vijayawada",
+            type: "Sleeper Coach",
+            seats: 25,
+            price: 450
+        }
+    ];
+
+    let bookings = [];
+    let users = [];
+    let currentUser = "";
+
+    function searchBus() {
+        let from = document.getElementById("from").value.toLowerCase();
+        let to = document.getElementById("to").value.toLowerCase();
+        let date = document.getElementById("date").value;
+        let results = document.getElementById("results");
+
+        results.innerHTML = "";
+
+        buses.forEach((bus, index) => {
+            if (bus.from.toLowerCase().includes(from) &&
+                bus.to.toLowerCase().includes(to)) {
+                results.innerHTML += `
+                    <div class="bus">
+                        <h3>${bus.name}</h3>
+                        <p>${bus.from} to ${bus.to}</p>
+                        <p>Category: ${bus.type}</p>
+                        <p>Seats: ${bus.seats}</p>
+                        <p>Price: ₹${bus.price}</p>
+                        <button onclick="bookTicket(${index}, '${date}')">
+                            Book Ticket
+                        </button>
+                    </div>`;
+            }
+        });
+
+        if (results.innerHTML === "") {
+            results.innerHTML = "No buses found.";
+        }
+    }
+
+    function bookTicket(index, date) {
+        if (!currentUser) {
+            alert("Please login before booking.");
+            return;
+        }
+
+        let bus = buses[index];
+
+        if (bus.seats <= 0) {
+            alert("No seats available.");
+            return;
+        }
+
+        let passenger = prompt("Enter passenger name:");
+
+        if (!passenger || !passenger.trim()) return;
+
+        bus.seats--;
+
+        bookings.push({
+            user: currentUser,
+            passenger: passenger,
+            bus: bus.name,
+            route: bus.from + " to " + bus.to,
+            date: date || "Not selected",
+            price: bus.price
+        });
+
+        alert("Ticket booked successfully!");
+        showBookings();
+        searchBus();
+    }
+
+    function showBookings() {
+        let output = document.getElementById("bookings");
+        let mine = bookings
+            .map((b, i) => ({...b, index: i}))
+            .filter(b => b.user === currentUser);
+
+        output.innerHTML = "";
+
+        if (mine.length === 0) {
+            output.innerHTML = "No bookings yet.";
+            return;
+        }
+
+        mine.forEach(b => {
+            output.innerHTML += `
+                <div class="bus">
+                    ${b.passenger} - ${b.bus}<br>
+                    Route: ${b.route}<br>
+                    Date: ${b.date}<br>
+                    Price: ₹${b.price}<br>
+                    <button onclick="cancelTicket(${b.index})">
+                        Cancel Ticket
+                    </button>
+                </div>`;
+        });
+    }
+
+    function cancelTicket(index) {
+        if (!confirm("Cancel this ticket?")) return;
+
+        let booking = bookings[index];
+        let bus = buses.find(b => b.name === booking.bus);
+
+        if (bus) bus.seats++;
+
+        bookings.splice(index, 1);
+        showBookings();
+        searchBus();
+
+        alert("Ticket cancelled.");
+    }
+
+    function register() {
+        let name = document.getElementById("regName").value.trim();
+        let email = document.getElementById("regEmail").value.trim();
+        let pass = document.getElementById("regPass").value;
+
+        if (!name || !email || !pass) {
+            alert("Please fill all registration fields.");
+            return;
+        }
+
+        if (users.some(u => u.email === email)) {
+            alert("Email already registered.");
+            return;
+        }
+
+        users.push({name, email, pass});
+        document.getElementById("regMsg").innerText =
+            "Registration successful. Please log in.";
+    }
+
+    function login() {
+        let username = document.getElementById("loginUser").value.trim();
+        let pass = document.getElementById("loginPass").value;
+
+        let user = users.find(u =>
+            (u.email === username || u.name === username) &&
+            u.pass === pass
+        );
+
+        if (user) {
+            currentUser = user.email;
+            document.getElementById("loginMsg").innerText =
+                "Welcome, " + user.name;
+            showBookings();
+        } else {
+            document.getElementById("loginMsg").innerText =
+                "Invalid login or register first.";
+        }
+    }
+
+    function addBus() {
+        let name = document.getElementById("busName").value.trim();
+        let from = document.getElementById("busFrom").value.trim();
+        let to = document.getElementById("busTo").value.trim();
+        let type = document.getElementById("busType").value;
+        let seats = Number(document.getElementById("busSeats").value);
+        let price = Number(document.getElementById("busPrice").value);
+
+        if (!name || !from || !to ||
+            document.getElementById("busSeats").value === "" ||
+            document.getElementById("busPrice").value === "" ||
+            seats < 0 || price < 0) {
+            alert("Enter valid bus details.");
+            return;
+        }
+
+        buses.push({name, from, to, type, seats, price});
+
+        alert("Bus added successfully.");
+        showBuses();
+    }
+
+    function showBuses() {
+        document.getElementById("busList").innerHTML =
+            "<h3>Bus Information</h3>" +
+            buses.map((b, i) => `
+                <div class="bus">
+                    ${b.name}: ${b.from} to ${b.to}<br>
+                    ${b.type} | Seats: ${b.seats} | ₹${b.price}
+                    <button onclick="editBus(${i})">Edit Bus</button>
+                    <button onclick="deleteBus(${i})">Delete Bus</button>
+                </div>`).join("");
+    }
+
+    function editBus(index) {
+        let bus = buses[index];
+
+        let name = prompt("Bus name:", bus.name);
+        if (name === null) return;
+
+        let from = prompt("Source:", bus.from);
+        if (from === null) return;
+
+        let to = prompt("Destination:", bus.to);
+        if (to === null) return;
+
+        let seats = prompt("Available seats:", bus.seats);
+        if (seats === null) return;
+
+        let price = prompt("Ticket price:", bus.price);
+        if (price === null) return;
+
+        if (!name.trim() || !from.trim() || !to.trim() ||
+            seats.trim() === "" || price.trim() === "" ||
+            !Number.isInteger(Number(seats)) || Number(seats) < 0 ||
+            !Number.isFinite(Number(price)) || Number(price) < 0) {
+            alert("Invalid bus details.");
+            return;
+        }
+
+        bus.name = name.trim();
+        bus.from = from.trim();
+        bus.to = to.trim();
+        bus.seats = Number(seats);
+        bus.price = Number(price);
+
+        showBuses();
+        searchBus();
+        alert("Bus information updated.");
+    }
+
+    function deleteBus(index) {
+        if (confirm("Delete this bus?")) {
+            buses.splice(index, 1);
+            showBuses();
+            searchBus();
+        }
+    }
+
+    function addComment() {
+        let comment = document.getElementById("comment").value.trim();
+
+        if (comment) {
+            let p = document.createElement("p");
+            p.textContent = comment;
+            document.getElementById("comments").appendChild(p);
+            document.getElementById("comment").value = "";
+        }
+    }
+
+    function generateReport() {
+        document.getElementById("report").innerHTML =
+            "<h3>Bus Report</h3>" +
+            "Total buses: " + buses.length + "<br>" +
+            "Total bookings: " + bookings.length + "<br>" +
+            "Registered users: " + users.length;
+    }
+
+    showBuses();
+</script>
+
+</body>
+</html>
+```

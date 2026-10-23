@@ -1,0 +1,505 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Flight Reservation System</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9;color:#172554}
+header{background:#123b70;color:white;padding:22px;text-align:center}
+nav{background:#082b52;padding:12px;display:flex;justify-content:center;flex-wrap:wrap;gap:8px}
+button{background:#0878d1;color:white;border:0;padding:10px 15px;border-radius:5px;cursor:pointer}
+nav button{background:#164777}
+button:hover{background:#075ca1}
+main{max-width:1000px;margin:25px auto;padding:15px}
+section{background:white;padding:22px;margin-bottom:20px;border-radius:10px;box-shadow:0 2px 8px #ccd4df}
+h2{color:#0878d1}
+input,select,textarea{width:100%;padding:11px;margin:7px 0 13px;border:1px solid #cbd5e1;border-radius:5px}
+label{font-weight:bold}
+.flight,.ticket{border:1px solid #dbe3ed;padding:15px;margin:12px 0;border-radius:8px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.hidden{display:none}
+.success{color:green;font-weight:bold}
+footer{text-align:center;padding:20px;background:#123b70;color:white}
+@media(max-width:600px){main{padding:10px}section{padding:15px}nav button{font-size:12px}}
+@media print{header,nav,footer,.no-print{display:none!important}body{background:white}section{box-shadow:none}}
+</style>
+</head>
+<body>
+
+<header>
+<h1>✈ SkyWay Flight Reservation</h1>
+<p>Search Flights | Book Tickets | Travel Anywhere</p>
+</header>
+
+<nav>
+<button onclick="show('home')">Home / Search</button>
+<button onclick="show('register')">Register</button>
+<button onclick="show('login')">Customer Login</button>
+<button onclick="show('myTickets')">My Tickets</button>
+<button onclick="show('status')">Booking Status</button>
+<button onclick="show('cancel')">Cancel Ticket</button>
+<button onclick="show('feedback')">Feedback</button>
+<button onclick="show('forgot')">Forgot Password</button>
+<button onclick="show('adminLogin')">Admin Login</button>
+<button onclick="logout()">Logout</button>
+</nav>
+
+<main>
+
+<section id="home">
+<h2>Search Flights</h2>
+<div class="row">
+<div><label>From</label><select id="from">
+<option>Chennai</option><option>Delhi</option><option>Mumbai</option>
+<option>Bengaluru</option><option>Hyderabad</option><option>Kolkata</option>
+</select></div>
+<div><label>Destination</label><select id="to">
+<option>Delhi</option><option>Mumbai</option><option>Chennai</option>
+<option>Bengaluru</option><option>Hyderabad</option><option>Kolkata</option>
+</select></div>
+<div><label>Travel Date</label><input type="date" id="date"></div>
+<div><label>Class</label><select id="classType">
+<option>Economy</option><option>Business</option><option>First Class</option>
+</select></div>
+</div>
+<button onclick="searchFlights()">Search Flights</button>
+<div id="flightResults"></div>
+</section>
+
+<section id="register" class="hidden">
+<h2>Customer Registration</h2>
+<form onsubmit="registerUser(event)">
+<label>Full Name</label><input id="regName" required>
+<label>Email</label><input id="regEmail" type="email" required>
+<label>Password</label><input id="regPass" type="password" minlength="4" required>
+<button>Register</button>
+</form>
+<p id="regMsg"></p>
+</section>
+
+<section id="login" class="hidden">
+<h2>Customer Login</h2>
+<form onsubmit="loginUser(event)">
+<label>Email</label><input id="loginEmail" type="email" required>
+<label>Password</label><input id="loginPass" type="password" required>
+<button>Login</button>
+</form>
+<p id="loginMsg"></p>
+</section>
+
+<section id="forgot" class="hidden">
+<h2>Forgot Password</h2>
+<p>Enter your registered email and create a new demo password.</p>
+<form onsubmit="resetPassword(event)">
+<label>Email</label><input id="forgotEmail" type="email" required>
+<label>New Password</label><input id="newPass" type="password" minlength="4" required>
+<button>Reset Password</button>
+</form>
+<p id="forgotMsg"></p>
+</section>
+
+<section id="booking" class="hidden">
+<h2>Book Flight Ticket</h2>
+<div id="selectedFlight"></div>
+<form onsubmit="proceedPayment(event)">
+<label>Passenger Name</label><input id="passenger" required>
+<label>Passenger Age</label><input id="age" type="number" min="1" max="120" required>
+<label>Passenger Gender</label>
+<select id="gender"><option>Male</option><option>Female</option><option>Other</option></select>
+<label>Seat Number</label><select id="seat"></select>
+<label>Contact Email</label><input id="contactEmail" type="email" required>
+<button>Continue to Payment</button>
+</form>
+</section>
+
+<section id="payment" class="hidden">
+<h2>Ticket Payment</h2>
+<div id="paymentDetails"></div>
+<p>This is a simulated payment for the lab demonstration.</p>
+<form onsubmit="completeBooking(event)">
+<label>Payment Method</label>
+<select id="payMethod"><option>UPI Demo</option><option>Credit/Debit Card Demo</option><option>Net Banking Demo</option></select>
+<label>Demo Transaction Reference</label><input id="transaction" placeholder="Enter demo reference" required>
+<button>Confirm Payment</button>
+</form>
+<p id="paymentMsg"></p>
+</section>
+
+<section id="myTickets" class="hidden">
+<h2>My Tickets / Booking History</h2>
+<div id="ticketList"></div>
+</section>
+
+<section id="status" class="hidden">
+<h2>View Booking Status</h2>
+<label>Booking ID</label><input id="statusId" placeholder="Enter booking ID">
+<button onclick="checkStatus()">Check Status</button>
+<div id="statusResult"></div>
+</section>
+
+<section id="cancel" class="hidden">
+<h2>Cancel Ticket</h2>
+<label>Booking ID</label><input id="cancelId" placeholder="Enter booking ID">
+<button onclick="cancelTicket()">Cancel Booking</button>
+<div id="cancelResult"></div>
+</section>
+
+<section id="feedback" class="hidden">
+<h2>Customer Feedback</h2>
+<form onsubmit="submitFeedback(event)">
+<label>Name</label><input id="fbName" required>
+<label>Rating</label>
+<select id="rating"><option>5 - Excellent</option><option>4 - Very Good</option><option>3 - Good</option><option>2 - Fair</option><option>1 - Poor</option></select>
+<label>Comments</label><textarea id="comments" required></textarea>
+<button>Submit Feedback</button>
+</form>
+<p id="fbMsg"></p>
+</section>
+
+<section id="adminLogin" class="hidden">
+<h2>Administrator Login</h2>
+<p>Demo username: <b>admin</b> | Demo password: <b>admin123</b></p>
+<form onsubmit="adminSignIn(event)">
+<label>Username</label><input id="adminUser" required>
+<label>Password</label><input id="adminPass" type="password" required>
+<button>Admin Login</button>
+</form>
+<p id="adminMsg"></p>
+</section>
+
+<section id="admin" class="hidden">
+<h2>Admin Dashboard & Reports</h2>
+<div id="report"></div>
+<h3>Add Flight</h3>
+<form onsubmit="addFlight(event)">
+<label>Airline Name</label><input id="airline" required>
+<div class="row">
+<div><label>From</label><input id="adminFrom" required></div>
+<div><label>To</label><input id="adminTo" required></div>
+</div>
+<label>Flight Date</label><input id="adminDate" type="date" required>
+<label>Departure Time</label><input id="adminTime" type="time" required>
+<label>Economy Fare (₹)</label><input id="adminFare" type="number" min="1" required>
+<button>Add Flight</button>
+</form>
+<h3>Manage Flight Schedules</h3>
+<div id="adminFlights"></div>
+<h3>All Bookings</h3>
+<div id="adminBookings"></div>
+<h3>Registered Customers</h3>
+<div id="adminUsers"></div>
+<h3>Customer Feedback</h3>
+<div id="adminFeedback"></div>
+</section>
+
+</main>
+<footer>© 2026 SkyWay Airlines | Internet Programming Lab Experiment</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const get = key => JSON.parse(localStorage.getItem(key) || "[]");
+const save = (key,value) => localStorage.setItem(key,JSON.stringify(value));
+const safe = value => String(value ?? "").replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+
+let currentUser = sessionStorage.getItem("skyUser") || "";
+let isAdmin = false;
+let selected = null;
+let pending = null;
+
+const today = new Date().toLocaleDateString("en-CA");
+$("date").min = today;
+$("date").value = today;
+$("adminDate").min = today;
+$("adminDate").value = today;
+
+if(!localStorage.getItem("skyFlights")){
+ save("skyFlights",[
+  {id:1,airline:"Sky Express",from:"Chennai",to:"Delhi",date:today,time:"08:00",fare:4500,seats:20},
+  {id:2,airline:"Air India Demo",from:"Chennai",to:"Mumbai",date:today,time:"11:30",fare:3800,seats:20},
+  {id:3,airline:"Blue Sky Airlines",from:"Bengaluru",to:"Delhi",date:today,time:"15:00",fare:5200,seats:20},
+  {id:4,airline:"Sky Express",from:"Hyderabad",to:"Kolkata",date:today,time:"19:00",fare:4100,seats:20}
+ ]);
+}
+
+function show(id){
+ document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));
+ $(id).classList.remove("hidden");
+ if(id==="myTickets") renderTickets();
+ if(id==="admin" && isAdmin) renderAdmin();
+ if(id==="home") searchFlights();
+ window.scrollTo(0,0);
+}
+
+function registerUser(e){
+ e.preventDefault();
+ let users=get("skyUsers");
+ let email=$("regEmail").value.trim().toLowerCase();
+ if(users.some(u=>u.email===email)){
+  $("regMsg").textContent="This email is already registered.";return;
+ }
+ users.push({name:$("regName").value.trim(),email,password:$("regPass").value});
+ save("skyUsers",users);
+ $("regMsg").textContent="Registration successful. Please log in.";
+ e.target.reset();
+}
+
+function loginUser(e){
+ e.preventDefault();
+ let email=$("loginEmail").value.trim().toLowerCase();
+ let user=get("skyUsers").find(u=>u.email===email && u.password===$("loginPass").value);
+ if(!user){$("loginMsg").textContent="Invalid email or password.";return;}
+ currentUser=user.email;
+ sessionStorage.setItem("skyUser",currentUser);
+ $("loginMsg").textContent="Welcome, "+user.name+"!";
+}
+
+function logout(){
+ currentUser="";
+ isAdmin=false;
+ sessionStorage.removeItem("skyUser");
+ alert("Logged out successfully.");
+ show("home");
+}
+
+function resetPassword(e){
+ e.preventDefault();
+ let users=get("skyUsers");
+ let user=users.find(u=>u.email===$("forgotEmail").value.trim().toLowerCase());
+ if(!user){$("forgotMsg").textContent="Email not registered.";return;}
+ user.password=$("newPass").value;
+ save("skyUsers",users);
+ $("forgotMsg").textContent="Demo password updated. Please log in.";
+ e.target.reset();
+}
+
+function searchFlights(){
+ let flights=get("skyFlights");
+ let from=$("from").value,to=$("to").value,date=$("date").value;
+ let cls=$("classType").value;
+ if(from===to){
+  $("flightResults").innerHTML="<p>Please select different departure and destination cities.</p>";return;
+ }
+ let results=flights.filter(f=>f.from.toLowerCase()===from.toLowerCase()&&
+ f.to.toLowerCase()===to.toLowerCase()&&f.date===date&&f.seats>0);
+ if(!results.length){
+  $("flightResults").innerHTML="<p>No flights found for this route and date. Try another date or route.</p>";return;
+ }
+ $("flightResults").innerHTML=results.map(f=>`
+ <div class="flight">
+ <h3>${safe(f.airline)} — Flight ${f.id}</h3>
+ <p>${safe(f.from)} → ${safe(f.to)}</p>
+ <p>Date: ${safe(f.date)} | Departure: ${safe(f.time)}</p>
+ <p>Class: ${safe(cls)} | Seats available: ${f.seats}</p>
+ <p><b>Fare: ₹${Math.round(f.fare*(cls==="Business"?2:cls==="First Class"?3:1))}</b></p>
+ <button onclick="bookFlight(${f.id})">Book Ticket</button>
+ </div>`).join("");
+}
+
+function bookFlight(id){
+ if(!currentUser){alert("Please register and log in before booking.");show("login");return;}
+ let flight=get("skyFlights").find(f=>f.id===id);
+ if(!flight||flight.seats<=0){alert("No seats available.");searchFlights();return;}
+ selected={...flight,classType:$("classType").value,
+ fare:Math.round(flight.fare*($("classType").value==="Business"?2:$("classType").value==="First Class"?3:1))};
+ $("selectedFlight").innerHTML=`<p>${safe(selected.airline)}: ${safe(selected.from)} → ${safe(selected.to)}</p>
+ <p>Date: ${safe(selected.date)} | Time: ${safe(selected.time)} | Class: ${safe(selected.classType)}</p>
+ <p>Fare: ₹${selected.fare}</p>`;
+ $("seat").innerHTML="";
+ for(let i=1;i<=20;i++){
+  let taken=get("skyBookings").some(b=>b.flightId===id&&b.seat==="S"+i&&b.status==="Confirmed");
+  if(!taken){
+   let opt=document.createElement("option");opt.value="S"+i;opt.textContent="Seat S"+i;$("seat").appendChild(opt);
+  }
+ }
+ if(!$("seat").options.length){alert("All seats have been booked.");return;}
+ $("contactEmail").value=currentUser;
+ show("booking");
+}
+
+function proceedPayment(e){
+ e.preventDefault();
+ if(!selected||!currentUser){alert("Please log in and select a flight.");return;}
+ let seat=$("seat").value;
+ if(get("skyBookings").some(b=>b.flightId===selected.id&&b.seat===seat&&b.status==="Confirmed")){
+  alert("This seat is no longer available. Please choose another seat.");bookFlight(selected.id);return;
+ }
+ pending={
+  bookingId:"SKY"+Date.now(),
+  user:currentUser,flightId:selected.id,airline:selected.airline,
+  from:selected.from,to:selected.to,date:selected.date,time:selected.time,
+  classType:selected.classType,fare:selected.fare,
+  passenger:$("passenger").value.trim(),age:$("age").value,
+  gender:$("gender").value,seat,
+  email:$("contactEmail").value.trim(),
+  status:"Pending Payment",paymentMethod:"",transaction:""
+ };
+ $("paymentDetails").innerHTML=`<p>Passenger: ${safe(pending.passenger)}</p>
+ <p>Flight: ${safe(pending.from)} → ${safe(pending.to)}</p>
+ <p>Seat: ${safe(seat)} | Fare: ₹${pending.fare}</p>`;
+ show("payment");
+}
+
+function completeBooking(e){
+ e.preventDefault();
+ if(!pending)return;
+ let flights=get("skyFlights");
+ let flight=flights.find(f=>f.id===pending.flightId);
+ if(!flight||flight.seats<=0){alert("Flight is sold out.");return;}
+ let bookings=get("skyBookings");
+ if(bookings.some(b=>b.flightId===pending.flightId&&b.seat===pending.seat&&b.status==="Confirmed")){
+  alert("Seat already booked. Please select another seat.");pending=null;show("home");return;
+ }
+ flight.seats--;
+ pending.status="Confirmed";
+ pending.paymentMethod=$("payMethod").value;
+ pending.transaction=$("transaction").value.trim();
+ pending.bookingTime=new Date().toLocaleString();
+ bookings.push(pending);
+ save("skyFlights",flights);
+ save("skyBookings",bookings);
+ $("paymentMsg").innerHTML='<span class="success">Booking confirmed! Booking ID: '+safe(pending.bookingId)+'</span>';
+ alert("Ticket booked successfully! Booking ID: "+pending.bookingId);
+ pending=null;
+ e.target.reset();
+ show("myTickets");
+}
+
+function renderTickets(){
+ if(!currentUser){
+  $("ticketList").innerHTML='<p>Please <button onclick="show(\'login\')">log in</button> to view your tickets.</p>';return;
+ }
+ let tickets=get("skyBookings").filter(b=>b.user===currentUser);
+ $("ticketList").innerHTML=tickets.length?tickets.map(ticketHTML).join(""):"<p>No bookings found.</p>";
+}
+
+function ticketHTML(b){
+ return `<div class="ticket">
+ <h3>✈ ${safe(b.airline)}</h3>
+ <p><b>Booking ID:</b> ${safe(b.bookingId)}</p>
+ <p>${safe(b.from)} → ${safe(b.to)}</p>
+ <p>Date: ${safe(b.date)} | Departure: ${safe(b.time)}</p>
+ <p>Passenger: ${safe(b.passenger)} | Seat: ${safe(b.seat)}</p>
+ <p>Class: ${safe(b.classType)} | Fare: ₹${b.fare}</p>
+ <p>Status: <b>${safe(b.status)}</b></p>
+ <button class="no-print" onclick="printTicket('${safe(b.bookingId)}')">Print Ticket</button>
+ </div>`;
+}
+
+function printTicket(id){
+ let b=get("skyBookings").find(x=>x.bookingId===id);
+ if(!b||(b.user!==currentUser&&!isAdmin)){alert("You cannot print this ticket.");return;}
+ let w=window.open("","_blank");
+ if(!w){alert("Allow pop-ups to print your ticket.");return;}
+ w.document.write("<html><head><title>Flight Ticket</title></head><body style='font-family:Arial;padding:30px'>"+
+ "<h1>SkyWay Airlines - E-Ticket</h1>"+
+ "<h2>"+safe(b.airline)+"</h2>"+
+ "<p>Booking ID: "+safe(b.bookingId)+"</p>"+
+ "<p>Passenger: "+safe(b.passenger)+"</p>"+
+ "<p>Route: "+safe(b.from)+" to "+safe(b.to)+"</p>"+
+ "<p>Date: "+safe(b.date)+" | Departure: "+safe(b.time)+"</p>"+
+ "<p>Seat: "+safe(b.seat)+" | Class: "+safe(b.classType)+"</p>"+
+ "<p>Fare: ₹"+b.fare+"</p><p>Status: "+safe(b.status)+"</p>"+
+ "<p>Payment: "+safe(b.paymentMethod)+"</p>"+
+ "<script>window.onload=function(){window.print()}<\/script></body></html>");
+ w.document.close();
+}
+
+function checkStatus(){
+ let id=$("statusId").value.trim();
+ let b=get("skyBookings").find(x=>x.bookingId===id);
+ if(!b||(b.user!==currentUser&&!isAdmin)){
+  $("statusResult").textContent="Booking not found. Log in with the account used for this booking.";return;
+ }
+ $("statusResult").innerHTML="<p>Booking ID: "+safe(b.bookingId)+"</p><p>Status: <b>"+safe(b.status)+"</b></p>";
+}
+
+function cancelTicket(){
+ let id=$("cancelId").value.trim(),bookings=get("skyBookings");
+ let b=bookings.find(x=>x.bookingId===id);
+ if(!b||(b.user!==currentUser&&!isAdmin)){
+  $("cancelResult").textContent="Booking not found or access denied.";return;
+ }
+ if(b.status!=="Confirmed"){
+  $("cancelResult").textContent="This ticket cannot be cancelled.";return;
+ }
+ b.status="Cancelled";
+ let flights=get("skyFlights");
+ let f=flights.find(x=>x.id===b.flightId);
+ if(f)f.seats++;
+ save("skyFlights",flights);save("skyBookings",bookings);
+ $("cancelResult").textContent="Ticket cancelled successfully. Any refund must be processed separately.";
+}
+
+function submitFeedback(e){
+ e.preventDefault();
+ let feedback=get("skyFeedback");
+ feedback.push({name:$("fbName").value.trim(),rating:$("rating").value,
+ comments:$("comments").value.trim(),date:new Date().toLocaleDateString()});
+ save("skyFeedback",feedback);
+ $("fbMsg").textContent="Thank you for your feedback!";
+ e.target.reset();
+}
+
+function adminSignIn(e){
+ e.preventDefault();
+ if($("adminUser").value==="admin"&&$("adminPass").value==="admin123"){
+  isAdmin=true;$("adminMsg").textContent="Admin login successful.";show("admin");
+ }else $("adminMsg").textContent="Invalid admin username or password.";
+}
+
+function addFlight(e){
+ e.preventDefault();
+ if(!isAdmin)return;
+ let flights=get("skyFlights");
+ flights.push({
+ id:Date.now(),airline:$("airline").value.trim(),
+ from:$("adminFrom").value.trim(),to:$("adminTo").value.trim(),
+ date:$("adminDate").value,time:$("adminTime").value,
+ fare:Number($("adminFare").value),seats:20
+ });
+ save("skyFlights",flights);
+ e.target.reset();renderAdmin();
+ alert("Flight added successfully.");
+}
+
+function deleteFlight(id){
+ if(!isAdmin)return;
+ if(get("skyBookings").some(b=>b.flightId===id&&b.status==="Confirmed")){
+  alert("Cannot delete a flight with confirmed bookings.");return;
+ }
+ if(confirm("Delete this flight?")){
+  save("skyFlights",get("skyFlights").filter(f=>f.id!==id));renderAdmin();
+ }
+}
+
+function renderAdmin(){
+ if(!isAdmin)return;
+ let flights=get("skyFlights"),bookings=get("skyBookings"),
+ users=get("skyUsers"),feedback=get("skyFeedback");
+ $("report").innerHTML=`<div class="row">
+ <div class="flight">Total Flights: <b>${flights.length}</b></div>
+ <div class="flight">Total Customers: <b>${users.length}</b></div>
+ <div class="flight">Total Bookings: <b>${bookings.length}</b></div>
+ <div class="flight">Confirmed Tickets: <b>${bookings.filter(b=>b.status==="Confirmed").length}</b></div>
+ </div>`;
+ $("adminFlights").innerHTML=flights.map(f=>`<div class="flight">
+ <b>${safe(f.airline)}</b> | ${safe(f.from)} → ${safe(f.to)}
+ <p>${safe(f.date)} ${safe(f.time)} | Fare ₹${f.fare} | Available seats: ${f.seats}</p>
+ <button onclick="deleteFlight(${f.id})">Delete Flight</button></div>`).join("")||"No flights.";
+ $("adminBookings").innerHTML=bookings.map(b=>`<div class="flight">
+ ID: ${safe(b.bookingId)} | ${safe(b.passenger)} | ${safe(b.status)} | ₹${b.fare}
+ <p>Customer: ${safe(b.user)} | ${safe(b.from)} → ${safe(b.to)}</p>
+ </div>`).join("")||"No bookings.";
+ $("adminUsers").innerHTML=users.map(u=>`<p>${safe(u.name)} — ${safe(u.email)}</p>`).join("")||"No customers.";
+ $("adminFeedback").innerHTML=feedback.map(f=>`<div class="flight">
+ ${safe(f.name)} | ${safe(f.rating)}<p>${safe(f.comments)}</p>
+ </div>`).join("")||"No feedback.";
+}
+</script>
+</body>
+</html>

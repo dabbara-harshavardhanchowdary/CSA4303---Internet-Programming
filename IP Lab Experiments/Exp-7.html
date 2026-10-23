@@ -1,0 +1,689 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glow & Grace | Beauty Parlour Booking</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: Arial, sans-serif;
+    background: #fff9fa;
+    color: #49333c;
+    line-height: 1.6;
+}
+
+header {
+    background: #6b3450;
+    padding: 16px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.logo {
+    color: #ffe0c8;
+    font-size: 25px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+nav a:hover { color: #ffc9a8; }
+
+.hero {
+    min-height: 430px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 50px 6%;
+    color: white;
+    background:
+        linear-gradient(#44203399, #44203399),
+        url("https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1600&q=80")
+        center/cover no-repeat;
+}
+
+.hero h1 {
+    font-size: clamp(32px, 5vw, 52px);
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 18px;
+    margin-bottom: 25px;
+}
+
+.btn, button {
+    display: inline-block;
+    border: none;
+    padding: 12px 20px;
+    background: #e5a1b4;
+    color: #4b2537;
+    border-radius: 6px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn:hover, button:hover { background: #f5c7b5; }
+
+section { padding: 55px 7%; }
+
+h2 {
+    color: #6b3450;
+    text-align: center;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #8b707d;
+    margin-bottom: 30px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dfcbd4;
+    border-radius: 5px;
+    font: inherit;
+    background: white;
+    color: #49333c;
+}
+
+.services, .stylists, .staff-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    margin-top: 28px;
+}
+
+.service-card, .stylist-card, .staff-card {
+    background: white;
+    padding: 23px;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px #6b345018;
+    text-align: center;
+}
+
+.service-card h3, .stylist-card h3, .staff-card h3 {
+    color: #6b3450;
+    margin: 10px 0;
+}
+
+.service-card p, .stylist-card p, .staff-card p {
+    color: #806b77;
+    margin-bottom: 12px;
+}
+
+.service-icon {
+    font-size: 42px;
+}
+
+.price {
+    color: #a3446b;
+    font-weight: bold;
+    font-size: 21px;
+    margin: 12px 0;
+}
+
+.stylist-card img {
+    width: 115px;
+    height: 115px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.light { background: #f9eaf0; }
+
+.form-box {
+    max-width: 680px;
+    margin: 25px auto;
+    padding: 28px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px #6b345018;
+}
+
+.form-box label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.form-box label input,
+.form-box label select,
+.form-box label textarea {
+    margin-top: 6px;
+}
+
+.form-box button { width: 100%; }
+
+.calendar-box {
+    max-width: 850px;
+    margin: 25px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px #6b345018;
+}
+
+.calendar-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    gap: 12px;
+}
+
+.calendar-head h3 { color: #6b3450; }
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 7px;
+    text-align: center;
+}
+
+.day, .date {
+    padding: 12px 2px;
+    border-radius: 5px;
+}
+
+.day {
+    background: #6b3450;
+    color: white;
+    font-size: 13px;
+}
+
+.date { background: #f9eaf0; }
+
+.date.available { border: 1px solid #b3d8bb; }
+
+.date.unavailable {
+    background: #e8e2e5;
+    color: #988b92;
+    text-decoration: line-through;
+}
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    margin: 25px 0;
+}
+
+table {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    padding: 13px;
+    border: 1px solid #ead8e0;
+    text-align: left;
+}
+
+th {
+    background: #6b3450;
+    color: white;
+}
+
+.status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 15px;
+    background: #f9e1b9;
+    color: #704e16;
+    font-size: 12px;
+}
+
+.info-card {
+    max-width: 800px;
+    margin: 15px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+}
+
+.info-card h3 { color: #6b3450; }
+
+footer {
+    background: #492238;
+    color: white;
+    padding: 30px 6%;
+    text-align: center;
+}
+
+footer a {
+    color: #ffd6bd;
+    text-decoration: none;
+    margin: 8px;
+}
+
+footer p { margin: 8px; }
+
+.note {
+    color: #806b77;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 12px;
+}
+
+@media (max-width: 800px) {
+    header { justify-content: center; }
+    nav { justify-content: center; }
+    .services, .stylists, .staff-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 550px) {
+    section { padding: 38px 5%; }
+    h2 { font-size: 25px; }
+    .services, .stylists, .staff-grid {
+        grid-template-columns: 1fr;
+    }
+    .calendar-box { padding: 12px; }
+    .calendar { gap: 3px; }
+    .day, .date { padding: 9px 0; font-size: 12px; }
+    .form-box { padding: 20px; }
+    nav { gap: 10px; }
+    nav a { font-size: 13px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <a class="logo" href="#home">✨ Glow & Grace</a>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#services">Services</a>
+        <a href="#stylists">Stylists</a>
+        <a href="#booking">Book Now</a>
+        <a href="#calendar">Calendar</a>
+        <a href="#account">My Account</a>
+        <a href="#staff">Staff</a>
+        <a href="#login">Login</a>
+    </nav>
+</header>
+
+<section class="hero" id="home">
+    <div>
+        <h1>Your Beauty, Our Passion</h1>
+        <p>Discover your style. Book your beauty appointment with ease.</p>
+        <a href="#booking" class="btn">Book an Appointment</a>
+    </div>
+</section>
+
+<section id="services">
+    <h2>Our Beauty Services</h2>
+    <p class="subtitle">Professional care for every occasion.</p>
+
+    <div class="services">
+        <article class="service-card">
+            <div class="service-icon">💇‍♀️</div>
+            <h3>Hair Styling</h3>
+            <p>Haircuts, styling and hair treatments.</p>
+            <div class="price">₹500</div>
+            <a href="#booking" class="btn">Book Service</a>
+        </article>
+
+        <article class="service-card">
+            <div class="service-icon">💅</div>
+            <h3>Manicure & Pedicure</h3>
+            <p>Nail care and relaxing beauty treatments.</p>
+            <div class="price">₹700</div>
+            <a href="#booking" class="btn">Book Service</a>
+        </article>
+
+        <article class="service-card">
+            <div class="service-icon">💆‍♀️</div>
+            <h3>Facial & Skin Care</h3>
+            <p>Refreshing facials and skin treatments.</p>
+            <div class="price">₹900</div>
+            <a href="#booking" class="btn">Book Service</a>
+        </article>
+
+        <article class="service-card">
+            <div class="service-icon">💄</div>
+            <h3>Makeup</h3>
+            <p>Party makeup and special occasion looks.</p>
+            <div class="price">₹1,500</div>
+            <a href="#booking" class="btn">Book Service</a>
+        </article>
+
+        <article class="service-card">
+            <div class="service-icon">🧖‍♀️</div>
+            <h3>Hair Spa</h3>
+            <p>Nourishing treatments for healthy-looking hair.</p>
+            <div class="price">₹1,000</div>
+            <a href="#booking" class="btn">Book Service</a>
+        </article>
+
+        <article class="service-card">
+            <div class="service-icon">👰</div>
+            <h3>Bridal Package</h3>
+            <p>Complete bridal styling for your big day.</p>
+            <div class="price">₹5,000</div>
+            <a href="#booking" class="btn">Book Service</a>
+        </article>
+    </div>
+</section>
+
+<section id="stylists" class="light">
+    <h2>Meet Our Stylists</h2>
+    <p class="subtitle">Choose your preferred beauty professional.</p>
+
+    <div class="stylists">
+        <article class="stylist-card">
+            <img src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=300&q=80" alt="Hair stylist">
+            <h3>Ananya</h3>
+            <p>Hair Styling Specialist</p>
+            <a href="#booking" class="btn">Choose Stylist</a>
+        </article>
+
+        <article class="stylist-card">
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80" alt="Beauty stylist">
+            <h3>Priya</h3>
+            <p>Skin Care Specialist</p>
+            <a href="#booking" class="btn">Choose Stylist</a>
+        </article>
+
+        <article class="stylist-card">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Makeup artist">
+            <h3>Meera</h3>
+            <p>Makeup Artist</p>
+            <a href="#booking" class="btn">Choose Stylist</a>
+        </article>
+    </div>
+</section>
+
+<section id="booking">
+    <h2>Book Your Appointment</h2>
+    <p class="subtitle">Select a service, stylist and preferred time.</p>
+
+    <form class="form-box" action="#account">
+        <label>Full Name
+            <input type="text" required placeholder="Enter your name">
+        </label>
+
+        <label>Email Address
+            <input type="email" required placeholder="Enter your email">
+        </label>
+
+        <label>Phone Number
+            <input type="tel" required placeholder="Enter phone number">
+        </label>
+
+        <label>Beauty Service
+            <select required>
+                <option value="">Choose a service</option>
+                <option>Hair Styling - ₹500</option>
+                <option>Manicure & Pedicure - ₹700</option>
+                <option>Facial & Skin Care - ₹900</option>
+                <option>Makeup - ₹1500</option>
+                <option>Hair Spa - ₹1000</option>
+                <option>Bridal Package - ₹5000</option>
+            </select>
+        </label>
+
+        <label>Preferred Stylist
+            <select required>
+                <option>Ananya</option>
+                <option>Priya</option>
+                <option>Meera</option>
+                <option>Any Available Stylist</option>
+            </select>
+        </label>
+
+        <label>Appointment Date
+            <input type="date" required>
+        </label>
+
+        <label>Appointment Time
+            <select required>
+                <option value="">Choose a time</option>
+                <option>09:00 AM</option>
+                <option>10:00 AM</option>
+                <option>11:00 AM</option>
+                <option>12:00 PM</option>
+                <option>02:00 PM</option>
+                <option>03:00 PM</option>
+                <option>04:00 PM</option>
+                <option>05:00 PM</option>
+            </select>
+        </label>
+
+        <label>Additional Requests
+            <textarea rows="3" placeholder="Enter your preferences"></textarea>
+        </label>
+
+        <button type="submit">Submit Appointment (Demo)</button>
+    </form>
+    <p class="note">Actual booking and slot confirmation require a connected backend.</p>
+</section>
+
+<section id="calendar" class="light">
+    <h2>Reservation Calendar</h2>
+    <p class="subtitle">Illustration of available and unavailable dates.</p>
+
+    <div class="calendar-box">
+        <div class="calendar-head">
+            <h3>November 2026</h3>
+            <span class="status">Demo Calendar</span>
+        </div>
+
+        <div class="calendar">
+            <div class="day">Sun</div><div class="day">Mon</div>
+            <div class="day">Tue</div><div class="day">Wed</div>
+            <div class="day">Thu</div><div class="day">Fri</div>
+            <div class="day">Sat</div>
+
+            <div class="date">1</div><div class="date available">2</div>
+            <div class="date available">3</div><div class="date unavailable">4</div>
+            <div class="date available">5</div><div class="date available">6</div>
+            <div class="date">7</div>
+
+            <div class="date">8</div><div class="date available">9</div>
+            <div class="date available">10</div><div class="date available">11</div>
+            <div class="date unavailable">12</div><div class="date available">13</div>
+            <div class="date">14</div>
+
+            <div class="date">15</div><div class="date available">16</div>
+            <div class="date available">17</div><div class="date available">18</div>
+            <div class="date available">19</div><div class="date unavailable">20</div>
+            <div class="date">21</div>
+
+            <div class="date">22</div><div class="date available">23</div>
+            <div class="date available">24</div><div class="date available">25</div>
+            <div class="date available">26</div><div class="date available">27</div>
+            <div class="date">28</div>
+
+            <div class="date">29</div><div class="date available">30</div>
+        </div>
+
+        <p style="margin-top:15px">🟢 Available dates are illustrative. Grey dates represent sample unavailable dates.</p>
+    </div>
+</section>
+
+<section id="account">
+    <h2>My Account</h2>
+    <p class="subtitle">Sample customer dashboard.</p>
+
+    <div class="table-wrap">
+        <table>
+            <tr>
+                <th>Appointment ID</th><th>Service</th>
+                <th>Date</th><th>Time</th><th>Status</th>
+            </tr>
+            <tr>
+                <td>GL1001</td><td>Hair Styling</td>
+                <td>Sample Date</td><td>10:00 AM</td>
+                <td><span class="status">Sample Booking</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <h2 style="margin-top:35px">Reservation History</h2>
+    <p class="subtitle">Past appointments will appear here after backend integration.</p>
+</section>
+
+<section id="payment" class="light">
+    <h2>Appointment Payment</h2>
+    <p class="subtitle">Choose a payment preference.</p>
+
+    <form class="form-box">
+        <label>Payment Type
+            <select>
+                <option>Full Payment</option>
+                <option>Partial Deposit</option>
+            </select>
+        </label>
+
+        <label>Payment Provider
+            <select>
+                <option>PayPal (Integration Required)</option>
+                <option>Stripe (Integration Required)</option>
+                <option>Pay at Salon</option>
+            </select>
+        </label>
+
+        <button type="button">Continue to Payment (Demo)</button>
+        <p class="note">No payment is processed by this demo form.</p>
+    </form>
+</section>
+
+<section id="feedback">
+    <h2>Customer Feedback</h2>
+    <p class="subtitle">Tell us about your salon experience.</p>
+
+    <form class="form-box">
+        <label>Your Name
+            <input type="text" required>
+        </label>
+
+        <label>Rating
+            <select>
+                <option>★★★★★ - Excellent</option>
+                <option>★★★★ - Very Good</option>
+                <option>★★★ - Good</option>
+                <option>★★ - Fair</option>
+                <option>★ - Poor</option>
+            </select>
+        </label>
+
+        <label>Your Feedback
+            <textarea rows="4" required placeholder="Share your experience"></textarea>
+        </label>
+
+        <button type="button">Submit Feedback (Demo)</button>
+    </form>
+</section>
+
+<section id="login" class="light">
+    <h2>Customer Login</h2>
+    <form class="form-box">
+        <label>Email
+            <input type="email" required>
+        </label>
+
+        <label>Password
+            <input type="password" required>
+        </label>
+
+        <button type="button">Login (Demo)</button>
+        <p class="note">Registration and authentication require a backend.</p>
+    </form>
+</section>
+
+<section id="staff">
+    <h2>Salon Manager & Staff Dashboard</h2>
+    <p class="subtitle">Manage reservations and customer communication.</p>
+
+    <div class="staff-grid">
+        <article class="staff-card">
+            <h3>Upcoming Reservations</h3>
+            <p>View the day's appointment schedule.</p>
+        </article>
+
+        <article class="staff-card">
+            <h3>Manage Calendar</h3>
+            <p>Review bookings and unavailable time slots.</p>
+        </article>
+
+        <article class="staff-card">
+            <h3>Add or Edit Booking</h3>
+            <p>Manage reservations for customers.</p>
+        </article>
+
+        <article class="staff-card">
+            <h3>Customer Contact</h3>
+            <p>Call or message customers using connected services.</p>
+        </article>
+
+        <article class="staff-card">
+            <h3>Manage Services</h3>
+            <p>Update service details, duration and prices.</p>
+        </article>
+
+        <article class="staff-card">
+            <h3>Cancellation Management</h3>
+            <p>Review cancellations and unpaid appointments.</p>
+        </article>
+    </div>
+</section>
+
+<section class="light">
+    <h2>Contact Us</h2>
+    <div class="info-card">
+        <p><strong>Address:</strong> Main Road, Chennai, India</p>
+        <p><strong>Phone:</strong> +91 98765 43210</p>
+        <p><strong>Email:</strong> glowgrace@example.com</p>
+        <p><strong>Opening Hours:</strong> 9:00 AM - 7:00 PM</p>
+    </div>
+</section>
+
+<footer>
+    <h3>✨ Glow & Grace Beauty Parlour</h3>
+    <p>Your beauty, our passion.</p>
+    <p>
+        <a href="#home">Home</a>
+        <a href="#services">Services</a>
+        <a href="#booking">Book Appointment</a>
+        <a href="#feedback">Feedback</a>
+        <a href="#staff">Staff</a>
+    </p>
+    <p>© 2026 Glow & Grace. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

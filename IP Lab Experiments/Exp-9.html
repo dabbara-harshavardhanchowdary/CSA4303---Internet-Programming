@@ -1,0 +1,466 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechSavvy - Online Gadget Store</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f4f6fa;color:#222}
+header{background:#14213d;color:white;padding:18px 6%;display:flex;
+justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+header h1{color:#fca311}
+nav a{color:white;text-decoration:none;margin:8px;font-weight:bold}
+nav a:hover{color:#fca311}
+.hero{background:linear-gradient(120deg,#14213d,#345995);color:white;
+padding:48px 7%;text-align:center}
+.hero h2{font-size:34px;margin-bottom:12px}
+.hero p{margin-bottom:20px}
+section{padding:28px 6%;scroll-margin-top:12px}
+h2{color:#14213d;margin-bottom:18px}
+h3{margin-bottom:10px}
+button,.btn{background:#fca311;color:#14213d;border:0;padding:10px 14px;
+border-radius:5px;cursor:pointer;font-weight:bold;margin:4px;text-decoration:none;
+display:inline-block}
+button:hover,.btn:hover{background:#e89100}
+.danger{background:#dc3545;color:white}
+.danger:hover{background:#b02a37}
+input,select,textarea{width:100%;padding:11px;margin:7px 0 12px;
+border:1px solid #ccd2da;border-radius:5px;font-size:15px}
+label{font-weight:bold;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.card{background:white;padding:18px;border-radius:10px;box-shadow:0 3px 12px #00000010}
+.card p{margin:9px 0;line-height:1.45}
+.product-icon{font-size:58px;text-align:center;background:#edf1f7;
+padding:18px;border-radius:8px;margin-bottom:14px}
+.price{font-size:21px;color:#d47a00;font-weight:bold}
+.search-row{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
+form{max-width:650px}
+.notice{background:#fff2d5;padding:12px;border-radius:6px;margin:10px 0}
+.badge{background:#e0f4e8;color:#166534;padding:4px 8px;border-radius:4px;font-size:12px}
+table{width:100%;border-collapse:collapse;background:white;margin:12px 0}
+th,td{padding:11px;border:1px solid #ddd;text-align:left}
+th{background:#14213d;color:white}
+footer{background:#14213d;color:white;text-align:center;padding:24px}
+.small{font-size:13px;color:#666}
+.status{color:#087f5b;font-weight:bold}
+@media(max-width:650px){
+ header{align-items:flex-start}
+ .hero h2{font-size:27px}
+ .search-row{grid-template-columns:1fr}
+ nav a{display:inline-block;margin:5px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚡ TechSavvy</h1>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#products">Products</a>
+    <a href="#cart">Cart (<span id="cartCount">0</span>)</a>
+    <a href="#orders">Orders</a>
+    <a href="#account">Login</a>
+    <a href="#admin">Admin</a>
+  </nav>
+</header>
+
+<div class="hero" id="home">
+  <h2>Upgrade Your Digital Life</h2>
+  <p>Discover smartphones, laptops, tablets, and accessories at great prices.</p>
+  <button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">
+    Shop Now
+  </button>
+</div>
+
+<section id="categories">
+  <h2>Shop by Category</h2>
+  <div class="grid">
+    <div class="card"><h3>📱 Smartphones</h3><p>Latest mobile phones and smart devices.</p><button onclick="filterCategory('Smartphones')">Explore</button></div>
+    <div class="card"><h3>💻 Laptops</h3><p>Laptops for study, work, and gaming.</p><button onclick="filterCategory('Laptops')">Explore</button></div>
+    <div class="card"><h3>📲 Tablets</h3><p>Portable devices for entertainment and work.</p><button onclick="filterCategory('Tablets')">Explore</button></div>
+    <div class="card"><h3>🎧 Accessories</h3><p>Headphones, watches, and other accessories.</p><button onclick="filterCategory('Accessories')">Explore</button></div>
+  </div>
+</section>
+
+<section id="products">
+  <h2>Product Catalogue</h2>
+  <div class="search-row">
+    <input id="search" placeholder="Search products..." oninput="renderProducts()">
+    <select id="categoryFilter" onchange="renderProducts()">
+      <option value="">All Categories</option>
+      <option>Smartphones</option>
+      <option>Laptops</option>
+      <option>Tablets</option>
+      <option>Accessories</option>
+    </select>
+    <select id="sort" onchange="renderProducts()">
+      <option value="">Sort by</option>
+      <option value="low">Price: Low to High</option>
+      <option value="high">Price: High to Low</option>
+      <option value="name">Name: A to Z</option>
+    </select>
+  </div>
+  <div id="productList" class="grid"></div>
+</section>
+
+<section id="cart">
+  <h2>🛒 Shopping Cart</h2>
+  <div id="cartItems"></div>
+  <h3 id="cartTotal">Total: ₹0</h3>
+  <button onclick="checkout()">Proceed to Checkout</button>
+  <p id="cartMessage" class="status"></p>
+</section>
+
+<section id="wishlist">
+  <h2>❤️ My Wishlist</h2>
+  <div id="wishlistItems" class="grid"></div>
+</section>
+
+<section id="orders">
+  <h2>📦 Order Tracking and History</h2>
+  <form id="trackForm">
+    <label>Enter Order ID</label>
+    <input id="trackId" placeholder="Example: TS123456" required>
+    <button type="submit">Track Order</button>
+  </form>
+  <p id="trackResult" class="status"></p>
+  <h3>Previous Orders</h3>
+  <div id="orderHistory" class="grid"></div>
+</section>
+
+<section id="account">
+  <h2>Customer Account</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Create Account</h3>
+      <form id="signupForm">
+        <label>Full Name</label>
+        <input id="signupName" required>
+        <label>Email</label>
+        <input id="signupEmail" type="email" required>
+        <label>Password</label>
+        <input id="signupPassword" type="password" minlength="6" required>
+        <button type="submit">Register</button>
+      </form>
+      <p id="signupMessage" class="status"></p>
+    </div>
+    <div class="card">
+      <h3>Login</h3>
+      <form id="loginForm">
+        <label>Email</label>
+        <input id="loginEmail" type="email" required>
+        <label>Password</label>
+        <input id="loginPassword" type="password" required>
+        <button type="submit">Login</button>
+      </form>
+      <p id="loginMessage" class="status"></p>
+      <button onclick="logout()">Logout</button>
+      <p id="currentUser" class="small">Not logged in</p>
+    </div>
+  </div>
+</section>
+
+<section id="admin">
+  <h2>⚙️ Admin Panel</h2>
+  <p class="notice">Lab demonstration only. This admin panel has no secure admin authentication.</p>
+  <div class="card">
+    <h3>Add / Update Product</h3>
+    <form id="productForm">
+      <input id="editId" type="hidden">
+      <label>Product Name</label>
+      <input id="productName" required>
+      <label>Category</label>
+      <select id="productCategory" required>
+        <option>Smartphones</option>
+        <option>Laptops</option>
+        <option>Tablets</option>
+        <option>Accessories</option>
+      </select>
+      <label>Price (₹)</label>
+      <input id="productPrice" type="number" min="1" required>
+      <label>Available Stock</label>
+      <input id="productStock" type="number" min="0" required>
+      <label>Description</label>
+      <textarea id="productDescription" required></textarea>
+      <button type="submit">Save Product</button>
+      <button type="button" onclick="clearProductForm()">Clear</button>
+    </form>
+  </div>
+  <h3 style="margin-top:22px">Manage Products</h3>
+  <div id="adminProducts" class="grid"></div>
+  <h3 style="margin-top:22px">Customer Checkout Information</h3>
+  <div id="customerOrders" class="grid"></div>
+</section>
+
+<footer>
+  <p>© 2026 TechSavvy Online Shopping</p>
+  <p>Internet Programming Lab Experiment</p>
+</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const initialProducts = [
+ {id:1,name:"Smartphone X",category:"Smartphones",price:45999,stock:10,description:"Powerful smartphone with an excellent camera.",icon:"📱",rating:4.8},
+ {id:2,name:"Galaxy Phone",category:"Smartphones",price:32999,stock:12,description:"Modern smartphone with a bright display.",icon:"📱",rating:4.6},
+ {id:3,name:"TechBook Pro",category:"Laptops",price:74999,stock:6,description:"High-performance laptop for work and study.",icon:"💻",rating:4.7},
+ {id:4,name:"Gaming Laptop",category:"Laptops",price:89999,stock:4,description:"Powerful laptop suitable for gaming.",icon:"💻",rating:4.9},
+ {id:5,name:"Smart Tablet",category:"Tablets",price:24999,stock:8,description:"Lightweight tablet for reading and streaming.",icon:"📲",rating:4.5},
+ {id:6,name:"Wireless Headphones",category:"Accessories",price:2999,stock:20,description:"Wireless headphones with clear sound.",icon:"🎧",rating:4.4},
+ {id:7,name:"Smart Watch",category:"Accessories",price:4999,stock:15,description:"Smart watch for everyday use and fitness.",icon:"⌚",rating:4.3},
+ {id:8,name:"Bluetooth Speaker",category:"Accessories",price:1999,stock:18,description:"Portable speaker for music anywhere.",icon:"🔊",rating:4.2}
+];
+
+let products=JSON.parse(localStorage.getItem("tsProducts")||"null")||initialProducts;
+let cart=JSON.parse(localStorage.getItem("tsCart")||"[]");
+let wishlist=JSON.parse(localStorage.getItem("tsWishlist")||"[]");
+let orders=JSON.parse(localStorage.getItem("tsOrders")||"[]");
+let users=JSON.parse(localStorage.getItem("tsUsers")||"[]");
+let loggedIn=localStorage.getItem("tsCurrentUser")||"";
+
+function save(){
+ localStorage.setItem("tsProducts",JSON.stringify(products));
+ localStorage.setItem("tsCart",JSON.stringify(cart));
+ localStorage.setItem("tsWishlist",JSON.stringify(wishlist));
+ localStorage.setItem("tsOrders",JSON.stringify(orders));
+ localStorage.setItem("tsUsers",JSON.stringify(users));
+ localStorage.setItem("tsCurrentUser",loggedIn);
+}
+function safe(s){
+ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function money(n){return "₹"+Number(n).toLocaleString("en-IN");}
+function filterCategory(c){
+ $("categoryFilter").value=c;
+ renderProducts();
+ $("products").scrollIntoView({behavior:"smooth"});
+}
+function renderProducts(){
+ let list=products.filter(p=>
+  p.name.toLowerCase().includes($("search").value.toLowerCase()) &&
+  (!$("categoryFilter").value||p.category===$("categoryFilter").value)
+ );
+ if($("sort").value==="low")list.sort((a,b)=>a.price-b.price);
+ if($("sort").value==="high")list.sort((a,b)=>b.price-a.price);
+ if($("sort").value==="name")list.sort((a,b)=>a.name.localeCompare(b.name));
+
+ $("productList").innerHTML=list.map(p=>`
+ <div class="card">
+  <div class="product-icon">${p.icon||"🔌"}</div>
+  <span class="badge">${safe(p.category)}</span>
+  <h3>${safe(p.name)}</h3>
+  <p>${safe(p.description)}</p>
+  <p>⭐ ${p.rating||"New"} / 5</p>
+  <p class="price">${money(p.price)}</p>
+  <p>${p.stock>0?"In stock: "+p.stock:"Out of stock"}</p>
+  <button onclick="addToCart(${p.id})" ${p.stock<=0?"disabled":""}>Add to Cart</button>
+  <button onclick="addWishlist(${p.id})">♡ Wishlist</button>
+  <button onclick="showDetails(${p.id})">Details</button>
+ </div>`).join("")||"<p>No products found.</p>";
+ renderAdmin();
+}
+function showDetails(id){
+ const p=products.find(x=>x.id===id);
+ if(p)alert(p.name+"\nCategory: "+p.category+"\nPrice: "+money(p.price)+"\nStock: "+p.stock+"\nRating: "+(p.rating||"New")+"/5\n\n"+p.description);
+}
+function addToCart(id){
+ const p=products.find(x=>x.id===id);
+ if(!p||p.stock<=0)return;
+ const item=cart.find(x=>x.id===id);
+ if(item){
+  if(item.qty>=p.stock){alert("Maximum available stock reached.");return;}
+  item.qty++;
+ }else cart.push({id,qty:1});
+ save();renderCart();
+}
+function changeQty(id,delta){
+ const item=cart.find(x=>x.id===id),p=products.find(x=>x.id===id);
+ if(!item)return;
+ if(delta>0&&item.qty>=p.stock){alert("Maximum available stock reached.");return;}
+ item.qty+=delta;
+ if(item.qty<=0)cart=cart.filter(x=>x.id!==id);
+ save();renderCart();
+}
+function removeCart(id){
+ cart=cart.filter(x=>x.id!==id);
+ save();renderCart();
+}
+function renderCart(){
+ let total=0,count=0;
+ $("cartItems").innerHTML=cart.map(item=>{
+  const p=products.find(x=>x.id===item.id);
+  if(!p)return "";
+  total+=p.price*item.qty;count+=item.qty;
+  return `<div class="card" style="margin-bottom:10px">
+   <h3>${safe(p.name)}</h3>
+   <p>${money(p.price)} each</p>
+   <p>Quantity: ${item.qty}</p>
+   <button onclick="changeQty(${p.id},-1)">−</button>
+   <button onclick="changeQty(${p.id},1)">+</button>
+   <button class="danger" onclick="removeCart(${p.id})">Remove</button>
+   <p>Subtotal: ${money(p.price*item.qty)}</p>
+  </div>`;
+ }).join("")||"<p>Your shopping cart is empty.</p>";
+ $("cartTotal").textContent="Total: "+money(total);
+ $("cartCount").textContent=count;
+}
+function addWishlist(id){
+ if(!wishlist.includes(id))wishlist.push(id);
+ save();renderWishlist();
+}
+function removeWishlist(id){
+ wishlist=wishlist.filter(x=>x!==id);
+ save();renderWishlist();
+}
+function renderWishlist(){
+ $("wishlistItems").innerHTML=wishlist.map(id=>{
+  const p=products.find(x=>x.id===id);
+  return p?`<div class="card"><h3>${safe(p.name)}</h3><p class="price">${money(p.price)}</p>
+  <button onclick="addToCart(${p.id})">Add to Cart</button>
+  <button class="danger" onclick="removeWishlist(${p.id})">Remove</button></div>`:"";
+ }).join("")||"<p>Your wishlist is empty.</p>";
+}
+function checkout(){
+ if(!cart.length){$("cartMessage").textContent="Your cart is empty.";return;}
+ if(!loggedIn){$("cartMessage").textContent="Please log in before checkout.";return;}
+ for(const item of cart){
+  const p=products.find(x=>x.id===item.id);
+  if(!p||p.stock<item.qty){$("cartMessage").textContent="Insufficient stock for "+(p?p.name:"a product")+". Update your cart.";return;}
+ }
+ const name=prompt("Enter delivery/customer name:");
+ if(!name||!name.trim())return;
+ const address=prompt("Enter delivery address:");
+ if(!address||!address.trim())return;
+ const email=loggedIn;
+ let total=0,items=[];
+ cart.forEach(item=>{
+  const p=products.find(x=>x.id===item.id);
+  p.stock-=item.qty;
+  total+=p.price*item.qty;
+  items.push({name:p.name,price:p.price,qty:item.qty});
+ });
+ const order={
+  id:"TS"+Date.now().toString().slice(-6),
+  customer:name.trim(),email,address:address.trim(),items,total,
+  status:"Order Placed",date:new Date().toLocaleDateString()
+ };
+ orders.push(order);cart=[];
+ save();renderAll();
+ $("cartMessage").textContent="Order placed successfully. Your order ID is "+order.id+". Demo checkout only; no payment was processed.";
+}
+$("trackForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const o=orders.find(x=>x.id.toLowerCase()===$("trackId").value.trim().toLowerCase());
+ $("trackResult").textContent=o?"Order "+o.id+" status: "+o.status:"Order not found.";
+});
+function renderOrders(){
+ const mine=orders.filter(o=>o.email===loggedIn);
+ $("orderHistory").innerHTML=mine.map(o=>`
+ <div class="card"><h3>Order ${safe(o.id)}</h3>
+ <p>Date: ${safe(o.date)}</p><p>Total: ${money(o.total)}</p>
+ <p>Status: <b>${safe(o.status)}</b></p>
+ <p>${o.items.map(i=>safe(i.name)+" × "+i.qty).join(", ")}</p></div>`
+ ).join("")||"<p>No order history for the current logged-in account.</p>";
+ $("customerOrders").innerHTML=orders.map(o=>`
+ <div class="card"><h3>Order ${safe(o.id)}</h3>
+ <p>Customer: ${safe(o.customer)}</p><p>Email: ${safe(o.email)}</p>
+ <p>Address: ${safe(o.address)}</p><p>Total: ${money(o.total)}</p>
+ <p>Status: ${safe(o.status)}</p>
+ <select id="status-${safe(o.id)}">
+  <option ${o.status==="Order Placed"?"selected":""}>Order Placed</option>
+  <option ${o.status==="Processing"?"selected":""}>Processing</option>
+  <option ${o.status==="Shipped"?"selected":""}>Shipped</option>
+  <option ${o.status==="Delivered"?"selected":""}>Delivered</option>
+  <option ${o.status==="Cancelled"?"selected":""}>Cancelled</option>
+ </select>
+ <button onclick="updateOrderStatus('${o.id}')">Update Status</button></div>`
+ ).join("")||"<p>No customer orders yet.</p>";
+}
+function updateOrderStatus(id){
+ const o=orders.find(x=>x.id===id);
+ if(!o)return;
+ o.status=$("status-"+id).value;
+ save();renderOrders();
+ alert("Demo order status updated.");
+}
+function renderAdmin(){
+ $("adminProducts").innerHTML=products.map(p=>`
+ <div class="card"><h3>${safe(p.name)}</h3><p>${safe(p.category)}</p>
+ <p>${money(p.price)} | Stock: ${p.stock}</p><p>${safe(p.description)}</p>
+ <button onclick="editProduct(${p.id})">Edit</button>
+ <button class="danger" onclick="deleteProduct(${p.id})">Delete</button></div>`
+ ).join("")||"<p>No products available.</p>";
+}
+function editProduct(id){
+ const p=products.find(x=>x.id===id);if(!p)return;
+ $("editId").value=p.id;$("productName").value=p.name;
+ $("productCategory").value=p.category;$("productPrice").value=p.price;
+ $("productStock").value=p.stock;$("productDescription").value=p.description;
+ $("admin").scrollIntoView({behavior:"smooth"});
+}
+function clearProductForm(){$("productForm").reset();$("editId").value="";}
+function deleteProduct(id){
+ if(!confirm("Delete this product?"))return;
+ products=products.filter(p=>p.id!==id);
+ cart=cart.filter(x=>x.id!==id);
+ wishlist=wishlist.filter(x=>x!==id);
+ save();renderAll();
+}
+$("productForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const id=$("editId").value;
+ const data={
+  name:$("productName").value.trim(),
+  category:$("productCategory").value,
+  price:Number($("productPrice").value),
+  stock:Number($("productStock").value),
+  description:$("productDescription").value.trim(),
+  icon:"🔌",rating:"New"
+ };
+ if(id){
+  const old=products.find(p=>p.id===Number(id));
+  if(old)Object.assign(old,data);
+ }else{
+  data.id=Date.now();
+  products.push(data);
+ }
+ save();clearProductForm();renderAll();
+ alert("Product saved in this browser's demo catalogue.");
+});
+$("signupForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const email=$("signupEmail").value.trim().toLowerCase();
+ if(users.some(u=>u.email===email)){
+  $("signupMessage").textContent="This email is already registered.";return;
+ }
+ users.push({name:$("signupName").value.trim(),email,password:$("signupPassword").value});
+ save();$("signupMessage").textContent="Account created. Please log in.";
+ e.target.reset();
+});
+$("loginForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const email=$("loginEmail").value.trim().toLowerCase();
+ const user=users.find(u=>u.email===email&&u.password===$("loginPassword").value);
+ if(!user){$("loginMessage").textContent="Invalid email or password.";return;}
+ loggedIn=user.email;save();renderAll();
+ $("loginMessage").textContent="Login successful. Welcome, "+user.name+"!";
+ e.target.reset();
+});
+function logout(){
+ loggedIn="";save();renderAll();
+ $("loginMessage").textContent="You have logged out.";
+}
+function renderAccount(){
+ const user=users.find(u=>u.email===loggedIn);
+ $("currentUser").textContent=user?"Logged in as: "+user.name+" ("+user.email+")":"Not logged in";
+}
+function renderAll(){
+ renderProducts();renderCart();renderWishlist();renderOrders();renderAccount();
+}
+renderAll();
+</script>
+</body>
+</html>

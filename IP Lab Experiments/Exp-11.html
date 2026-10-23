@@ -1,0 +1,576 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Finder - Real Estate Website</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #f4f8f7;
+    color: #263238;
+}
+
+header {
+    background: #123c35;
+    color: white;
+    padding: 20px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+header h1 {
+    color: #71e0b5;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 7px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: #71e0b5;
+}
+
+.hero {
+    background: linear-gradient(120deg, #123c35, #298c70);
+    color: white;
+    text-align: center;
+    padding: 65px 20px;
+}
+
+.hero h2 {
+    font-size: 38px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+section {
+    padding: 40px 6%;
+}
+
+section h2 {
+    text-align: center;
+    color: #123c35;
+    margin-bottom: 25px;
+}
+
+.search-panel, .panel {
+    background: white;
+    max-width: 950px;
+    margin: auto;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px #00000012;
+}
+
+.search-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccd8d4;
+    border-radius: 5px;
+}
+
+button, .btn {
+    display: inline-block;
+    padding: 12px 17px;
+    border: none;
+    background: #16866b;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    margin: 4px;
+}
+
+button:hover, .btn:hover {
+    background: #105b49;
+}
+
+.properties, .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+}
+
+.property {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px #00000012;
+    transition: 0.3s;
+}
+
+.property:hover {
+    transform: translateY(-5px);
+}
+
+.property img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.property-info {
+    padding: 18px;
+}
+
+.property-info h3 {
+    color: #123c35;
+    margin-bottom: 10px;
+}
+
+.property-info p {
+    margin: 9px 0;
+    line-height: 1.5;
+}
+
+.price {
+    color: #16866b;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.panel {
+    line-height: 1.8;
+}
+
+.panel form input, .panel form textarea, .panel form select {
+    margin: 10px 0;
+}
+
+.map-box {
+    background: #e1eee9;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 1.8;
+}
+
+footer {
+    background: #123c35;
+    color: white;
+    padding: 25px;
+    text-align: center;
+    line-height: 1.8;
+}
+
+@media(max-width: 600px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    nav a {
+        display: inline-block;
+    }
+
+    .hero h2 {
+        font-size: 28px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🏡 Home Finder</h1>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#search">Search</a>
+        <a href="#properties">Properties</a>
+        <a href="#favorites">Favorites</a>
+        <a href="#agents">Agents</a>
+        <a href="#login">Login</a>
+    </nav>
+</header>
+
+<section class="hero" id="home">
+    <h2>Find Your Dream Property</h2>
+    <p>Search houses, apartments, plots and commercial properties.<br>
+    Find the right property in your preferred location and budget.</p>
+    <a href="#search" class="btn">Explore Properties</a>
+</section>
+
+<!-- PROPERTY SEARCH -->
+<section id="search">
+    <h2>Search Properties</h2>
+
+    <div class="search-panel">
+        <input id="location" type="text" placeholder="Enter location">
+        
+        <select id="type">
+            <option value="">All Property Types</option>
+            <option>House</option>
+            <option>Apartment</option>
+            <option>Land</option>
+            <option>Commercial</option>
+        </select>
+
+        <input id="minPrice" type="number" placeholder="Minimum budget ₹">
+        <input id="maxPrice" type="number" placeholder="Maximum budget ₹">
+
+        <select id="purpose">
+            <option value="">Buy or Rent</option>
+            <option>Buy</option>
+            <option>Rent</option>
+        </select>
+
+        <button onclick="searchProperties()">Search Now</button>
+        <button onclick="saveSearch()">Save Search</button>
+        <button onclick="loadSearch()">Load Saved Search</button>
+    </div>
+
+    <p id="searchMessage" style="text-align:center;margin-top:15px"></p>
+</section>
+
+<!-- PROPERTY LISTINGS -->
+<section id="properties">
+    <h2>Available Properties</h2>
+
+    <div class="properties" id="propertyList">
+
+        <div class="property" data-location="chennai" data-type="House"
+             data-price="6500000" data-purpose="Buy">
+            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=900&q=80"
+                 alt="Modern house">
+            <div class="property-info">
+                <h3>Modern Family House</h3>
+                <p>📍 Chennai, Tamil Nadu</p>
+                <p>3 Bedrooms | 2 Bathrooms</p>
+                <p class="price">₹65,00,000</p>
+                <p>Spacious house with parking and garden.</p>
+                <button onclick="addFavorite('Modern Family House')">♡ Favorite</button>
+                <button onclick="bookVisit('Modern Family House')">Book Visit</button>
+                <button onclick="showLocation('Chennai, Tamil Nadu')">View Location</button>
+            </div>
+        </div>
+
+        <div class="property" data-location="bangalore bengaluru"
+             data-type="Apartment" data-price="4500000" data-purpose="Buy">
+            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=900&q=80"
+                 alt="Modern apartment">
+            <div class="property-info">
+                <h3>Luxury Apartment</h3>
+                <p>📍 Bengaluru, Karnataka</p>
+                <p>2 Bedrooms | 2 Bathrooms</p>
+                <p class="price">₹45,00,000</p>
+                <p>Modern apartment near shopping centers.</p>
+                <button onclick="addFavorite('Luxury Apartment')">♡ Favorite</button>
+                <button onclick="bookVisit('Luxury Apartment')">Book Visit</button>
+                <button onclick="showLocation('Bengaluru, Karnataka')">View Location</button>
+            </div>
+        </div>
+
+        <div class="property" data-location="hyderabad"
+             data-type="Land" data-price="2500000" data-purpose="Buy">
+            <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80"
+                 alt="Open land plot">
+            <div class="property-info">
+                <h3>Residential Land Plot</h3>
+                <p>📍 Hyderabad, Telangana</p>
+                <p>200 Square Yards</p>
+                <p class="price">₹25,00,000</p>
+                <p>Plot suitable for building a home.</p>
+                <button onclick="addFavorite('Residential Land Plot')">♡ Favorite</button>
+                <button onclick="bookVisit('Residential Land Plot')">Book Visit</button>
+                <button onclick="showLocation('Hyderabad, Telangana')">View Location</button>
+            </div>
+        </div>
+
+        <div class="property" data-location="chennai"
+             data-type="Apartment" data-price="15000" data-purpose="Rent">
+            <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=80"
+                 alt="Apartment interior">
+            <div class="property-info">
+                <h3>Furnished Rental Apartment</h3>
+                <p>📍 Chennai, Tamil Nadu</p>
+                <p>2 Bedrooms | Furnished</p>
+                <p class="price">₹15,000 / month</p>
+                <p>Ready-to-move rental apartment.</p>
+                <button onclick="addFavorite('Furnished Rental Apartment')">♡ Favorite</button>
+                <button onclick="bookVisit('Furnished Rental Apartment')">Book Visit</button>
+                <button onclick="showLocation('Chennai, Tamil Nadu')">View Location</button>
+            </div>
+        </div>
+
+        <div class="property" data-location="pune"
+             data-type="Commercial" data-price="8500000" data-purpose="Buy">
+            <img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80"
+                 alt="Commercial office space">
+            <div class="property-info">
+                <h3>Commercial Office Space</h3>
+                <p>📍 Pune, Maharashtra</p>
+                <p>Office | Parking Available</p>
+                <p class="price">₹85,00,000</p>
+                <p>Suitable for offices and businesses.</p>
+                <button onclick="addFavorite('Commercial Office Space')">♡ Favorite</button>
+                <button onclick="bookVisit('Commercial Office Space')">Book Visit</button>
+                <button onclick="showLocation('Pune, Maharashtra')">View Location</button>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- MAP -->
+<section id="map">
+    <h2>Explore Property Location</h2>
+    <div class="map-box">
+        <p id="mapMessage">Select View Location on a property to explore its area.</p>
+        <a id="mapLink" class="btn" href="https://maps.google.com/"
+           target="_blank" rel="noopener">Open Google Maps</a>
+    </div>
+</section>
+
+<!-- FAVORITES -->
+<section id="favorites">
+    <h2>My Favorite Properties</h2>
+    <div class="panel">
+        <ul id="favoriteList">
+            <li>No favorite properties saved.</li>
+        </ul>
+    </div>
+</section>
+
+<!-- PROPERTY VISITS -->
+<section id="visits">
+    <h2>Schedule a Property Visit</h2>
+    <div class="panel">
+        <form onsubmit="scheduleVisit(event)">
+            <input id="visitProperty" placeholder="Property name" required>
+            <input id="visitorName" placeholder="Your name" required>
+            <input id="visitorEmail" type="email" placeholder="Email address" required>
+            <input id="visitDate" type="date" required>
+            <button type="submit">Schedule Visit</button>
+        </form>
+        <div id="visitMessage"></div>
+    </div>
+</section>
+
+<!-- AGENTS -->
+<section id="agents">
+    <h2>Find Real Estate Agents</h2>
+    <div class="panel">
+        <input id="agentSearch" placeholder="Search agent or city">
+        <button onclick="searchAgents()">Search Agents</button>
+        <div id="agentResults"></div>
+
+        <hr style="margin:20px 0">
+        <h3>Available Agents</h3>
+        <p>Ravi Kumar — Chennai — Residential Properties</p>
+        <p>Priya Sharma — Bengaluru — Apartments</p>
+        <p>Arjun Reddy — Hyderabad — Land and Plots</p>
+    </div>
+</section>
+
+<!-- LOGIN -->
+<section id="login">
+    <h2>Buyer Login / Registration</h2>
+    <div class="panel">
+        <form onsubmit="loginDemo(event)">
+            <input id="buyerName" placeholder="Username" required>
+            <input id="buyerEmail" type="email" placeholder="Email address" required>
+            <input type="password" placeholder="Password" required>
+            <button type="submit">Login / Register</button>
+        </form>
+        <p id="loginMessage"></p>
+    </div>
+</section>
+
+<!-- VISITOR RECORDS -->
+<section id="visitors">
+    <h2>Website Visitor Records</h2>
+    <div class="panel">
+        <p>Visitors in this session: <strong id="visitorCount">0</strong></p>
+        <p id="visitorMessage">Visit records are stored for this browser session only.</p>
+    </div>
+</section>
+
+<footer>
+    <h3>🏡 Home Finder</h3>
+    <p>Find your home. Discover your future.</p>
+    <p>Contact: support@homefinder.example</p>
+    <p>© 2026 Home Finder. All rights reserved.</p>
+    <a href="#home" style="color:#71e0b5">Back to Home</a>
+</footer>
+
+<script>
+let favorites = [];
+let savedSearch = null;
+let visits = [];
+let visitorCount = 0;
+
+const properties = [
+    {name:"Modern Family House", location:"Chennai, Tamil Nadu",
+     type:"House", price:6500000, purpose:"Buy"},
+    {name:"Luxury Apartment", location:"Bengaluru, Karnataka",
+     type:"Apartment", price:4500000, purpose:"Buy"},
+    {name:"Residential Land Plot", location:"Hyderabad, Telangana",
+     type:"Land", price:2500000, purpose:"Buy"},
+    {name:"Furnished Rental Apartment", location:"Chennai, Tamil Nadu",
+     type:"Apartment", price:15000, purpose:"Rent"},
+    {name:"Commercial Office Space", location:"Pune, Maharashtra",
+     type:"Commercial", price:8500000, purpose:"Buy"}
+];
+
+// Count visits during this page session.
+visitorCount++;
+document.getElementById("visitorCount").textContent = visitorCount;
+
+function searchProperties() {
+    let location = document.getElementById("location").value.toLowerCase().trim();
+    let type = document.getElementById("type").value;
+    let min = Number(document.getElementById("minPrice").value) || 0;
+    let maxInput = document.getElementById("maxPrice").value;
+    let max = maxInput === "" ? Infinity : Number(maxInput);
+    let purpose = document.getElementById("purpose").value;
+    let found = 0;
+
+    document.querySelectorAll(".property").forEach(card => {
+        let cardLocation = card.dataset.location.toLowerCase();
+        let price = Number(card.dataset.price);
+
+        let matches =
+            (!location || cardLocation.includes(location)) &&
+            (!type || card.dataset.type === type) &&
+            price >= min && price <= max &&
+            (!purpose || card.dataset.purpose === purpose);
+
+        card.style.display = matches ? "" : "none";
+        if (matches) found++;
+    });
+
+    document.getElementById("searchMessage").textContent =
+        found + " matching properties found.";
+}
+
+function saveSearch() {
+    savedSearch = {
+        location: document.getElementById("location").value,
+        type: document.getElementById("type").value,
+        min: document.getElementById("minPrice").value,
+        max: document.getElementById("maxPrice").value,
+        purpose: document.getElementById("purpose").value
+    };
+
+    alert("Search criteria saved for this session.");
+}
+
+function loadSearch() {
+    if (!savedSearch) {
+        alert("No saved search. Please save your search first.");
+        return;
+    }
+
+    document.getElementById("location").value = savedSearch.location;
+    document.getElementById("type").value = savedSearch.type;
+    document.getElementById("minPrice").value = savedSearch.min;
+    document.getElementById("maxPrice").value = savedSearch.max;
+    document.getElementById("purpose").value = savedSearch.purpose;
+
+    searchProperties();
+}
+
+function addFavorite(name) {
+    if (!favorites.includes(name)) favorites.push(name);
+
+    let list = document.getElementById("favoriteList");
+    list.innerHTML = "";
+
+    favorites.forEach(item => {
+        let li = document.createElement("li");
+        li.textContent = item;
+        list.appendChild(li);
+    });
+}
+
+function bookVisit(name) {
+    document.getElementById("visitProperty").value = name;
+    document.getElementById("visits").scrollIntoView();
+}
+
+function scheduleVisit(event) {
+    event.preventDefault();
+
+    let date = document.getElementById("visitDate").value;
+    let name = document.getElementById("visitorName").value.trim();
+    let property = document.getElementById("visitProperty").value.trim();
+
+    if (date < new Date().toISOString().slice(0, 10)) {
+        alert("Please select today or a future date.");
+        return;
+    }
+
+    visits.push({name, property, date});
+
+    document.getElementById("visitMessage").textContent =
+        "Demo visit request submitted for " + property +
+        " on " + date + ".";
+}
+
+function showLocation(location) {
+    document.getElementById("mapMessage").textContent =
+        "Selected area: " + location;
+
+    document.getElementById("mapLink").href =
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(location);
+
+    document.getElementById("map").scrollIntoView();
+}
+
+function searchAgents() {
+    let query = document.getElementById("agentSearch").value.toLowerCase();
+
+    let agents = [
+        "Ravi Kumar — Chennai — Residential Properties",
+        "Priya Sharma — Bengaluru — Apartments",
+        "Arjun Reddy — Hyderabad — Land and Plots"
+    ];
+
+    let matches = agents.filter(agent =>
+        agent.toLowerCase().includes(query)
+    );
+
+    document.getElementById("agentResults").textContent =
+        matches.length ? matches.join(" | ") : "No matching agents found.";
+}
+
+function loginDemo(event) {
+    event.preventDefault();
+
+    let name = document.getElementById("buyerName").value.trim();
+
+    document.getElementById("loginMessage").textContent =
+        "Welcome, " + name + "! Demo login successful.";
+}
+</script>
+
+</body>
+</html>

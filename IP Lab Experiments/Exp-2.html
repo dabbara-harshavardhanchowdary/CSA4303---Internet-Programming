@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hotel Room Booking System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+    font-family:Arial;
+    margin:0;
+    background:#f2f2f2;
+}
+header{
+    background:#263238;
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+nav{
+    background:#37474f;
+    padding:12px;
+    text-align:center;
+}
+nav button{
+    background:white;
+    border:0;
+    padding:10px 15px;
+    margin:4px;
+    cursor:pointer;
+}
+section{
+    background:white;
+    margin:20px auto;
+    padding:20px;
+    max-width:900px;
+    border-radius:8px;
+}
+input,select{
+    padding:10px;
+    margin:6px;
+    width:90%;
+}
+button.action{
+    background:#263238;
+    color:white;
+    padding:10px 20px;
+    border:0;
+    cursor:pointer;
+}
+.room{
+    border:1px solid #ccc;
+    padding:15px;
+    margin:10px;
+    border-radius:6px;
+}
+.hidden{
+    display:none;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+th,td{
+    border:1px solid #ccc;
+    padding:10px;
+    text-align:center;
+}
+footer{
+    background:#263238;
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Grand Palace Hotel</h1>
+<p>Online Hotel Room Booking System</p>
+</header>
+
+<nav>
+<button onclick="show('home')">Home</button>
+<button onclick="show('rooms')">Rooms</button>
+<button onclick="show('booking')">Book Room</button>
+<button onclick="show('history')">My Bookings</button>
+<button onclick="show('login')">Login/Register</button>
+<button onclick="show('admin')">Admin</button>
+<button onclick="show('about')">About Us</button>
+<button onclick="show('contact')">Contact</button>
+</nav>
+
+<!-- HOME -->
+<section id="home">
+<h2>Search Hotels</h2>
+
+<input type="text" id="destination" placeholder="Enter Destination">
+
+<input type="date" id="checkin">
+
+<input type="date" id="checkout">
+
+<input type="number" id="guests" placeholder="Number of Guests">
+
+<button class="action" onclick="searchRooms()">Search Rooms</button>
+
+<div id="searchResult"></div>
+</section>
+
+<!-- ROOMS -->
+<section id="rooms" class="hidden">
+<h2>Room Types</h2>
+
+<div class="room">
+<h3>Single Room</h3>
+<p>Suitable for one guest.</p>
+<p>Price: ₹2000 / night</p>
+<p>Amenities: Wi-Fi, TV, AC</p>
+<button class="action" onclick="selectRoom('Single')">Book Now</button>
+</div>
+
+<div class="room">
+<h3>Double Room</h3>
+<p>Suitable for two guests.</p>
+<p>Price: ₹3000 / night</p>
+<p>Amenities: Wi-Fi, TV, AC, Breakfast</p>
+<button class="action" onclick="selectRoom('Double')">Book Now</button>
+</div>
+
+<div class="room">
+<h3>Deluxe Room</h3>
+<p>Luxury room with additional facilities.</p>
+<p>Price: ₹4500 / night</p>
+<p>Amenities: Wi-Fi, TV, AC, Breakfast</p>
+<button class="action" onclick="selectRoom('Deluxe')">Book Now</button>
+</div>
+
+<div class="room">
+<h3>Suite</h3>
+<p>Premium room suitable for families.</p>
+<p>Price: ₹6000 / night</p>
+<p>Amenities: Wi-Fi, TV, AC, Breakfast, Living Room</p>
+<button class="action" onclick="selectRoom('Suite')">Book Now</button>
+</div>
+</section>
+
+<!-- BOOKING -->
+<section id="booking" class="hidden">
+<h2>Room Booking</h2>
+
+<input type="text" id="name" placeholder="Customer Name">
+
+<input type="email" id="email" placeholder="Email">
+
+<select id="room">
+<option>Single</option>
+<option>Double</option>
+<option>Deluxe</option>
+<option>Suite</option>
+</select>
+
+<input type="date" id="arrival">
+
+<input type="date" id="departure">
+
+<input type="number" id="numberGuests" placeholder="Number of Guests">
+
+<button class="action" onclick="bookRoom()">Check Availability & Book</button>
+
+<p id="bookingMessage"></p>
+</section>
+
+<!-- BOOKING HISTORY -->
+<section id="history" class="hidden">
+<h2>My Booking History</h2>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Room</th>
+<th>Arrival</th>
+<th>Departure</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="bookingTable"></tbody>
+</table>
+</section>
+
+<!-- LOGIN -->
+<section id="login" class="hidden">
+<h2>Register / Login</h2>
+
+<input type="text" placeholder="Name">
+<input type="email" placeholder="Email">
+<input type="password" placeholder="Password">
+
+<button class="action" onclick="alert('Account created successfully!')">
+Register
+</button>
+
+<br><br>
+
+<button class="action" onclick="alert('Login successful!')">
+Login
+</button>
+</section>
+
+<!-- ADMIN -->
+<section id="admin" class="hidden">
+<h2>Administrator Panel</h2>
+
+<h3>Manage Room Quantity and Price</h3>
+
+<table>
+<tr>
+<th>Room Type</th>
+<th>Quantity</th>
+<th>Price</th>
+<th>Update</th>
+</tr>
+
+<tr>
+<td>Single</td>
+<td><input id="singleQty" value="10"></td>
+<td><input id="singlePrice" value="2000"></td>
+<td><button onclick="updateRoom('Single')">Update</button></td>
+</tr>
+
+<tr>
+<td>Double</td>
+<td><input id="doubleQty" value="10"></td>
+<td><input id="doublePrice" value="3000"></td>
+<td><button onclick="updateRoom('Double')">Update</button></td>
+</tr>
+
+<tr>
+<td>Deluxe</td>
+<td><input id="deluxeQty" value="5"></td>
+<td><input id="deluxePrice" value="4500"></td>
+<td><button onclick="updateRoom('Deluxe')">Update</button></td>
+</tr>
+
+<tr>
+<td>Suite</td>
+<td><input id="suiteQty" value="3"></td>
+<td><input id="suitePrice" value="6000"></td>
+<td><button onclick="updateRoom('Suite')">Update</button></td>
+</tr>
+</table>
+
+<h3>Manage Bookings</h3>
+
+<button class="action" onclick="show('history')">
+View All Bookings
+</button>
+
+<button class="action" onclick="alert('Booking details can be modified here.')">
+Modify Booking
+</button>
+
+<button class="action" onclick="alert('Booking cancelled by administrator.')">
+Cancel Booking
+</button>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="hidden">
+<h2>About Us</h2>
+<p>
+Grand Palace Hotel provides comfortable and affordable rooms
+with excellent hospitality and modern facilities.
+</p>
+
+<h3>Room Information</h3>
+<p>
+We provide Single, Double, Deluxe and Suite rooms.
+All rooms include basic facilities such as Wi-Fi, television and air conditioning.
+</p>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="hidden">
+<h2>Contact Us</h2>
+<p>Phone: +91 98765 43210</p>
+<p>Email: info@grandpalacehotel.com</p>
+<p>Address: Chennai, Tamil Nadu, India</p>
+
+<h3>Customer Service Q&A</h3>
+
+<p><b>Q: Can I cancel my booking?</b></p>
+<p>A: Yes, bookings can be cancelled up to 3 days before arrival.</p>
+
+<p><b>Q: Can I modify my booking?</b></p>
+<p>A: Yes, modifications are allowed up to 3 days before arrival.</p>
+</section>
+
+<!-- TRAVEL GUIDE -->
+<section id="travel">
+<h2>Local Travel Guide</h2>
+<p>
+Guests can visit nearby tourist attractions, restaurants,
+shopping centres and transportation facilities.
+</p>
+
+<h3>Privacy Policy</h3>
+<p>
+Customer information is kept secure and is used only for
+hotel booking and customer service purposes.
+</p>
+</section>
+
+<footer>
+<p>© 2026 Grand Palace Hotel | Online Hotel Booking</p>
+</footer>
+
+<script>
+
+let bookings=[];
+
+function show(id){
+
+let sections=document.querySelectorAll("section");
+
+sections.forEach(function(s){
+s.classList.add("hidden");
+});
+
+document.getElementById(id).classList.remove("hidden");
+
+if(id=="history"){
+displayBookings();
+}
+}
+
+function selectRoom(room){
+
+document.getElementById("room").value=room;
+show("booking");
+
+}
+
+function searchRooms(){
+
+let destination=document.getElementById("destination").value;
+
+if(destination==""){
+alert("Enter destination");
+return;
+}
+
+document.getElementById("searchResult").innerHTML=
+"<h3>Available Rooms in "+destination+"</h3>"+
+"<p>Single, Double, Deluxe and Suite rooms are available.</p>";
+
+}
+
+function bookRoom(){
+
+let name=document.getElementById("name").value;
+let email=document.getElementById("email").value;
+let room=document.getElementById("room").value;
+let arrival=document.getElementById("arrival").value;
+let departure=document.getElementById("departure").value;
+
+if(name=="" || email=="" || arrival=="" || departure==""){
+alert("Please fill all details");
+return;
+}
+
+let booking={
+name:name,
+email:email,
+room:room,
+arrival:arrival,
+departure:departure,
+status:"Confirmed"
+};
+
+bookings.push(booking);
+
+document.getElementById("bookingMessage").innerHTML=
+"Room booked successfully! Confirmation email sent to "+email;
+
+displayBookings();
+
+}
+
+function displayBookings(){
+
+let table=document.getElementById("bookingTable");
+
+table.innerHTML="";
+
+bookings.forEach(function(b,index){
+
+table.innerHTML+=
+"<tr>"+
+"<td>"+b.name+"</td>"+
+"<td>"+b.room+"</td>"+
+"<td>"+b.arrival+"</td>"+
+"<td>"+b.departure+"</td>"+
+"<td>"+b.status+"</td>"+
+"<td><button onclick='cancelBooking("+index+")'>Cancel</button></td>"+
+"</tr>";
+
+});
+
+}
+
+function cancelBooking(index){
+
+let today=new Date();
+let arrival=new Date(bookings[index].arrival);
+
+let difference=(arrival-today)/(1000*60*60*24);
+
+if(difference<3){
+
+alert("Booking cannot be cancelled within 3 days of arrival.");
+return;
+
+}
+
+bookings[index].status="Cancelled";
+
+displayBookings();
+
+}
+
+function updateRoom(room){
+
+alert(room+" room details updated successfully!");
+
+}
+
+</script>
+
+</body>
+</html>

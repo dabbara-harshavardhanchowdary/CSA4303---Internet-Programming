@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RailConnect | Railway Reservation</title>
+    <link rel="stylesheet" href="exp_4.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <header class="navbar">
+        <a href="#home" class="logo">🚆 RailConnect<span>.</span></a>
+
+        <nav class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#booking">Find Trains</a>
+            <a href="#pnr">PNR Status</a>
+            <a href="#trains">Popular Trains</a>
+            <a href="#contact">Contact</a>
+        </nav>
+
+        <a href="#login" class="login-btn">Login / Register</a>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <span class="tagline">YOUR JOURNEY, OUR PRIORITY</span>
+
+            <h1>Discover India,<br>One Train at a Time</h1>
+
+            <p>
+                Explore destinations, find the best train routes,
+                and make your next journey comfortable and memorable.
+            </p>
+
+            <a href="#booking" class="primary-btn">Book Your Journey →</a>
+
+            <div class="hero-stats">
+                <div>
+                    <h3>Easy</h3>
+                    <p>Train Search</p>
+                </div>
+                <div>
+                    <h3>Fast</h3>
+                    <p>Booking Process</p>
+                </div>
+                <div>
+                    <h3>Simple</h3>
+                    <p>PNR Checking</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Train Search -->
+    <section class="booking-section" id="booking">
+        <div class="booking-card">
+            <div class="section-heading">
+                <span class="small-label">PLAN YOUR TRIP</span>
+                <h2>Find Your Train</h2>
+                <p>Enter your journey details to explore available trains.</p>
+            </div>
+
+            <form action="#" class="search-form">
+                <div class="field">
+                    <label for="from">From Station</label>
+                    <input type="text" id="from"
+                           placeholder="e.g. Chennai" required>
+                </div>
+
+                <div class="field">
+                    <label for="to">To Station</label>
+                    <input type="text" id="to"
+                           placeholder="e.g. Hyderabad" required>
+                </div>
+
+                <div class="field">
+                    <label for="date">Journey Date</label>
+                    <input type="date" id="date" required>
+                </div>
+
+                <div class="field">
+                    <label for="class">Travel Class</label>
+                    <select id="class">
+                        <option value="">Select Class</option>
+                        <option>Sleeper (SL)</option>
+                        <option>AC 3 Tier (3A)</option>
+                        <option>AC 2 Tier (2A)</option>
+                        <option>AC First Class (1A)</option>
+                        <option>Chair Car (CC)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="search-btn">
+                    🔍 Search Trains
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features-section">
+        <div class="section-heading">
+            <span class="small-label">WHY RAILCONNECT?</span>
+            <h2>A Better Way to Travel</h2>
+            <p>Everything you need to plan and manage your journey.</p>
+        </div>
+
+        <div class="features-grid">
+            <article class="feature-card">
+                <div class="feature-icon">🎫</div>
+                <h3>Easy Reservation</h3>
+                <p>Enter your journey details and explore suitable train options.</p>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h3>PNR Status</h3>
+                <p>Check your reservation status and review your booking details.</p>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure Payments</h3>
+                <p>Designed to support secure payment processing when integrated.</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- Popular Trains -->
+    <section class="trains-section" id="trains">
+        <div class="section-heading">
+            <span class="small-label">EXPLORE RAIL JOURNEYS</span>
+            <h2>Popular Train Routes</h2>
+            <p>Explore example journeys and plan your next trip.</p>
+        </div>
+
+        <div class="train-grid">
+            <article class="train-card">
+                <img
+                    src="https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=900&q=85"
+                    alt="Passenger train travelling through a green landscape">
+
+                <div class="train-info">
+                    <span class="route-label">SOUTH INDIA</span>
+                    <h3>Chennai → Bengaluru</h3>
+                    <p>Explore a convenient rail journey between two major cities.</p>
+                    <a href="#booking" class="text-link">Plan Journey →</a>
+                </div>
+            </article>
+
+            <article class="train-card">
+                <img
+                    src="https://images.unsplash.com/photo-1532105956626-9569c03602f6?auto=format&fit=crop&w=900&q=85"
+                    alt="Railway track and train travel scenery">
+
+                <div class="train-info">
+                    <span class="route-label">CITY CONNECT</span>
+                    <h3>Hyderabad → Chennai</h3>
+                    <p>Check journey details and compare travel classes.</p>
+                    <a href="#booking" class="text-link">Plan Journey →</a>
+                </div>
+            </article>
+
+            <article class="train-card">
+                <img
+                    src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=85"
+                    alt="Beautiful green landscape for a scenic journey">
+
+                <div class="train-info">
+                    <span class="route-label">SCENIC TRAVEL</span>
+                    <h3>Explore India</h3>
+                    <p>Discover new destinations and enjoy the journey along the way.</p>
+                    <a href="#booking" class="text-link">Plan Journey →</a>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- PNR Status -->
+    <section class="pnr-section" id="pnr">
+        <div class="pnr-card">
+            <div>
+                <span class="small-label">BOOKING INFORMATION</span>
+                <h2>Check Your PNR Status</h2>
+                <p>Enter your 10-digit PNR number to check your reservation.</p>
+            </div>
+
+            <form action="#" class="pnr-form">
+                <input type="text" id="pnr-number"
+                       placeholder="Enter PNR number"
+                       maxlength="10" pattern="[0-9]{10}"
+                       aria-label="PNR number" required>
+                <button type="submit" class="search-btn">Check Status</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Login / Register -->
+    <section class="login-section" id="login">
+        <div class="section-heading">
+            <span class="small-label">YOUR ACCOUNT</span>
+            <h2>Welcome to RailConnect</h2>
+            <p>Use your account to manage your reservation details.</p>
+        </div>
+
+        <form action="#" class="account-form">
+            <label for="email">Email Address</label>
+            <input type="email" id="email"
+                   placeholder="Enter your email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password"
+                   placeholder="Enter your password" required>
+
+            <button type="submit" class="search-btn">Login</button>
+
+            <p class="form-note">
+                New user? Registration can be connected to the backend.
+            </p>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <a href="#home" class="footer-logo">🚆 RailConnect.</a>
+        <p>Your journey, our priority.</p>
+        <p class="footer-note">
+            College project demonstration website. Sample routes and
+            images are for display purposes.
+        </p>
+        <p class="copyright">© 2026 RailConnect | Railway Reservation System</p>
+    </footer>
+
+</body>
+</html>
